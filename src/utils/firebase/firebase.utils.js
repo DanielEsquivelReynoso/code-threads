@@ -1,5 +1,6 @@
 import { initializeApp } from 'firebase/app'; // creates an app instance for you based on a configuration made
 import { getAuth, signInWithRedirect, signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
+import { getFirestore, doc, getDoc, setDoc } from 'firebase/firestore'; // allows you access data inside the documents or change/add data
 
 // We need to connect this to firebase console.
 
@@ -23,3 +24,28 @@ provider.setCustomParameters({
 
 export const auth = getAuth();
 export const signInWithGooglePopup = () => signInWithPopup(auth, provider);
+export const db = getFirestore(); // this directly points to the database inside of the console
+
+export const createUserDocumentFromAuth = async (userAuth) => {
+  const userDocRef = doc(db, 'users', userAuth.uid);
+  console.log('userDocRef: ',userDocRef);
+
+  const userSnapshot = await getDoc(userDocRef);
+  console.log('userSnapshot exists: ', userSnapshot.exists());
+
+  if (!userSnapshot.exists()) {
+    const { displayName, email } = userAuth;
+    const createdAt = new Date();
+
+    try {
+      await setDoc(userDocRef, {
+        displayName,
+        email,
+        createdAt
+      });
+    } catch (error) {
+      console.log('error creating the user: ', error);
+    }
+  }
+  return userDocRef;
+};
