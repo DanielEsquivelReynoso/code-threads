@@ -1,5 +1,13 @@
 import { useState } from 'react';
 
+import FormInput from '../form-input/form-input.component.jsx';
+import './sign-up-form.styles.scss';
+
+import {
+  createAuthUserWithEmailAndPassword,
+  createUserDocumentFromAuth
+} from '../../utils/firebase/firebase.utils.js';
+
 const defaultFormFields = {
   displayName: '',
   email: '',
@@ -13,6 +21,39 @@ const SignUpForm = () => {
 
   console.log('formFields: ',formFields)
 
+  const resetFormFields = () => {
+    setFormFields(defaultFormFields);
+  }
+
+  // Explain how this handleSubmit works
+  const handleSubmit = async (event) => {
+    event.preventDefault()
+    console.log('handleSubmit: ', event.target);
+
+    // check if passwords match
+    if (password !== confirmPassword) {
+      alert('Passwords do not match'); // alerts the user
+      return;
+    }
+
+    // calls method in firebase to create the user
+    try {
+      const { user } = createAuthUserWithEmailAndPassword(
+        email,
+        password
+      );
+      // creates the new user
+      await createUserDocumentFromAuth(user, { displayName});
+      resetFormFields();
+    } catch (error) {
+      if (error.code === 'auth/email-already-in-use') {
+        alert('Cannot create user because email is already in use')
+      } else {
+        console.log('User was not added successfully: ', error);
+      };
+    };
+  };
+
   const handleChange = (event) => {
     const { name, value } = event.target;
 
@@ -21,18 +62,12 @@ const SignUpForm = () => {
   return (
     <div>
       <h1>Sign up with your email and password</h1>
-      <form onSubmit={()=> {}}>
-        <label>Display Name</label>
-        <input type='text' required onChange={handleChange} name='displayName' value={displayName}/>
+      <form onSubmit={handleSubmit}>
 
-        <label>Email</label>
-        <input type='email' required onChange={handleChange} name='email' value={email}/>
-
-        <label>Password</label>
-        <input type='password' required onChange={handleChange} name='password' value={password}/>
-
-        <label>Confirm Password</label>
-        <input type='password' required onChange={handleChange} name='confirmPassword' value={confirmPassword}/>
+        <FormInput label='Display Name' type='text' required onChange={handleChange} name='displayName' value={displayName}/>
+        <FormInput label='Email' type='email' required onChange={handleChange} name='email' value={email}/>
+        <FormInput label='Password' type='password' required onChange={handleChange} name='password' value={password}/>
+        <FormInput label='Confirm Password' type='password' required onChange={handleChange} name='confirmPassword' value={confirmPassword}/>
 
         <button type='submit'>Sign Up</button>
       </form>
