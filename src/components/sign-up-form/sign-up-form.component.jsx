@@ -22,6 +22,9 @@ const SignUpForm = () => {
   const [formFields, setFormFields] = useState(defaultFormFields);
   const { displayName, email, password, confirmPassword } = formFields;
 
+  const { setCurrentUser } = useContext(UserContext);
+
+
   console.log('hit')
 
   const resetFormFields = () => {
@@ -41,13 +44,17 @@ const SignUpForm = () => {
 
     // calls method in firebase to create the user
     try {
-      const { user } = createAuthUserWithEmailAndPassword(
+      const { user } = await createAuthUserWithEmailAndPassword(
         email,
         password
       );
+
+        setCurrentUser(user);
+
       // creates the new user
       await createUserDocumentFromAuth(user, { displayName});
       resetFormFields();
+
     } catch (error) {
       if (error.code === 'auth/email-already-in-use') {
         alert('Cannot create user because email is already in use')
@@ -79,3 +86,4 @@ const SignUpForm = () => {
 }
 
 export default SignUpForm;
+
