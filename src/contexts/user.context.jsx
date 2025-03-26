@@ -7,11 +7,12 @@ export const UserContext = createContext({
   currentUser: null
 })
 
-// 
 export const UserProvider = ({ children }) => {
   const [currentUser, setCurrentUser ] = useState(null);
   const value = { currentUser, setCurrentUser };
 
+  // The empty dependency array means that the useEffect only runs
+  // when the component mounts.
   useEffect(() => {
     const unsubscribe = onAuthStateChangedListener((user) => {
       if (user) {
