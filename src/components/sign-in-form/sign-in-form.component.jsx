@@ -27,6 +27,8 @@ const SignInForm = () => {
     setFormFields(defaultFormFields);
   }
 
+  // Why is this an async await?
+  // 
   const signInWithGoogle = async () => {
     const { user } = await signInWithGooglePopup();
     setCurrentUser(user);

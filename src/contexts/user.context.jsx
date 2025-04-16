@@ -12,8 +12,10 @@ export const UserProvider = ({ children }) => {
   const value = { currentUser, setCurrentUser };
 
   // The empty dependency array means that the useEffect only runs
-  // when the component mounts.
+  // once when the component mounts.
   useEffect(() => {
+    // when a user signs in or out, that is a change in the authentication state
+    // permanently open listener
     const unsubscribe = onAuthStateChangedListener((user) => {
       if (user) {
         createUserDocumentFromAuth(user);
