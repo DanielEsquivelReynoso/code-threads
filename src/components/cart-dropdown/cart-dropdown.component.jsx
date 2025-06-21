@@ -13,6 +13,7 @@ const CartDropdown = () => {
   const navigate = useNavigate();
 
   const goToCheckoutHandler = () => {
+    // navigate will take us to the checkout page
     navigate('/checkout');
   }
 
