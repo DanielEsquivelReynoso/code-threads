@@ -7,9 +7,16 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signOut,
-  onAuthStateChanged
+  onAuthStateChanged,
 } from 'firebase/auth';
-import { getFirestore, doc, getDoc, setDoc } from 'firebase/firestore'; // allows you access data inside the documents or change/add data
+import {
+  getFirestore,
+  doc,
+  getDoc,
+  setDoc,
+  collection,
+  writeBatch,
+} from 'firebase/firestore'; // allows you access data inside the documents or change/add data
 
 // We need to connect this to firebase console.
 
@@ -36,6 +43,16 @@ export const signInWithGooglePopup = () => signInWithPopup(auth, googleProvider)
 export const signInWithGoogleRedirect = () => signInWithRedirect(auth, googleProvider);
 
 export const db = getFirestore(); // this directly points to the database inside of the console
+
+export const addCollectionAndDocuments = async (collectionKey, objectsToAdd) => {
+  // how do we create the collection?
+  const collectionRef = collection(db, collectionKey);
+  // what do we do with collectionRef?
+  // we are writing multiple documents into this ref
+  // if all documents wrote to the database, then it's successful
+  //
+
+}
 
 export const createUserDocumentFromAuth = async (userAuth, additionalInformation = {}) => {
   if (!userAuth) return;
